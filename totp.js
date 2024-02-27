@@ -27,7 +27,21 @@ async function base32Decode(encoded) {
 
     return new Uint8Array(bytes);
 }
-
+async function loadConfig() {
+    try {
+        if(typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest){
+            const response = await fetch(chrome.runtime.getURL('config.json'));
+        }
+        else if(typeof browser !== "undefined" && browser.runtime && browser.runtime.getManifest){
+            const response = await fetch(browser.runtime.getURL('config.json'));
+        }
+        const data = await response.json();
+        return data.SECRET;
+    } catch (error) {
+        console.error('Error loading config:', error);
+        return null;
+    }
+}
 async function generateTOTP(secret) {
     
     const key = secret; // Placeholder, replace with actual byte array conversion
